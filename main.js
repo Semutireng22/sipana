@@ -35,6 +35,11 @@ class Vana {
             const response = await axios.get(url, { headers });
             return response.data;
         } catch (error) {
+            if (error.response && error.response.status === 429) {
+                this.log(`${'Rate limit exceeded. Waiting before retrying...'.red}`);
+                await this.waitWithCountdown(60); // Tunggu 1 menit
+                return this.getPlayerData(initData); // Coba lagi
+            }
             this.log(`${'Error when calling API'.red}`);
             console.error(error);
         }
@@ -66,6 +71,11 @@ class Vana {
             }
             return true;
         } catch (error) {
+            if (error.response && error.response.status === 429) {
+                this.log(`${'Rate limit exceeded. Waiting before retrying...'.red}`);
+                await this.waitWithCountdown(60); // Tunggu 1 menit
+                return this.postTaskCompletion(initData, taskId, points); // Coba lagi
+            }
             if (error.response) {
                 console.error('API response error:', error.response.data); // Log error response
             } else {
@@ -83,6 +93,11 @@ class Vana {
             const response = await axios.get(url, { headers });
             return response.data.tasks;
         } catch (error) {
+            if (error.response && error.response.status === 429) {
+                this.log(`${'Rate limit exceeded. Waiting before retrying...'.red}`);
+                await this.waitWithCountdown(60); // Tunggu 1 menit
+                return this.getTasks(initData); // Coba lagi
+            }
             this.log(`${'Error when taking the mission list'.red}`);
             console.error(error);
         }
@@ -117,7 +132,7 @@ class Vana {
             const playerData = await this.getPlayerData(initData);
 
             if (playerData) {
-                console.log(`========== ${'VANA POINT INJECT'.yellow} | ${'t.me/ugdairdrop'.yellow} ==========`);
+                console.log(`========== ${'VANA POINT INJECT'.yellow} | ${'t.me/ugdairdrop'.yellow} ==========`); 
                 this.log(`${'Account:'.green} ${playerData.tgFirstName.white}`);
                 this.log(`${'Points:'.green} ${playerData.points.toString().white}`);
                 this.log(`${'Multiplier:'.green} ${playerData.multiplier.toString().white}`);
